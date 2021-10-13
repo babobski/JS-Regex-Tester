@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}'">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="${styleMainUri}" nonce="${nonce}" rel="stylesheet">
+    <title>JS Regex Tester</title>
+</head>
+<body>
+    <div id="main">
+        <div id="editor">
+            <div id="input">
+                <div class="inner">
+                    <div id="regex" contenteditable="true"></div>
+                    <div id="modifiers" contenteditable="true"></div>
+                    <div id="modifier_settings">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                        </svg>
+                        <div id="modifier_settings_dropdown">
+                            <div class="setting" data-checked="true" data-value="g">
+                                <div class="label">
+                                    <b>g</b>lobal
+                                </div>
+                                <div class="desc">
+                                    Don't return after first match
+                                </div>
+                            </div>
+                            <div class="setting" data-checked="true" data-value="m">
+                                <div class="label">
+                                    <b>m</b>ulti line
+                                </div>
+                                <div class="desc">
+                                    ^ and $ match start/end of line
+                                </div>
+                            </div>
+                            <div class="setting" data-checked="false" data-value="i">
+                                <div class="label">
+                                    <b>i</b>nsensitive
+                                </div>
+                                <div class="desc">
+                                    Case insensitive match
+                                </div>
+                            </div>
+                            <div class="setting" data-checked="false" data-value="y">
+                                <div class="label">
+                                    stick<b>y</b>
+                                </div>
+                                <div class="desc">
+                                    Anchor to start of pattern, or at the end of the most recent match
+                                </div>
+                            </div>
+                            <div class="setting" data-checked="false" data-value="s">
+                                <div class="label">
+                                    <b>s</b>ingle line
+                                </div>
+                                <div class="desc">
+                                    Dot matches newline
+                                </div>
+                            </div>
+                            <div class="setting" data-checked="false" data-value="d">
+                                <div class="label">
+                                    in<b>d</b>ices
+                                </div>
+                                <div class="desc">
+                                    The regex engine returns match indices
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <span id="matches_counter">No match</span>
+                    <span id="error_msg"></span>
+                </div>
+            </div>
+            <div id="text">
+                <textarea placeholder="text" id="text_area"></textarea>
+                <pre id="output"></pre>
+            </div>
+        </div>
+        <div id="sidebar">
+            <div id="matches">
+                <h3>
+                    Matches <span id="matchpanel_count">0</span>
+                </h3>
+                <div id="match_list"></div>
+            </div>
+            <div id="reference">
+                <h3>
+                    Reference
+                </h3>
+                <table id="reference_list"></table>
+            </div>
+        </div>
+    </div>
+    <script nonce="${nonce}">
+        let matchTime;
+        let oninputAction = async () => {
+            let JSRegexTester = new Promise(resolve => {
+                let regex = document.getElementById('regex'),
+                    alert = document.getElementById('error_msg');
+                let matches = [];
+                let succes = true;
+                try {
+                    paintResult();
+                    if (regex.classList.contains('error')) {
+                        regex.classList.remove('error');
+                    }
+                    alert.textContent = '';
+                } catch (error) {
+                    if (error instanceof SyntaxError) {
+                        regex.classList.add('error');
+                        alert.innerHTML = error.message.substring(29, error.message.length).replace(/(.*)\/:\s(.*)/g, '$2');
+                    } else {
+                        console.error(error);
+                    }
+                    succes = false;
+                }
+
+                if (succes && regex.textContent.length > 0) {
+                    matches = calcMatches();
+                }
+
+                resolve(runMatchesLogic(matches));
+            });
+
+            return JSRegexTester;
+        };
+
+        let buildMatchesList = (matches) => {
+            let matchList = document.getElementById('match_list');
+
+            matchList.innerHTML = '';
+
+            for (let i = 0; i < matches.length; i++) {
+                const match = matches[i];
+
+                let matchWrap = createEl('div');
+                matchWrap.classList.add('match');
+                buildMatches(match, (i + 1), matchWrap);
+
+                matchList.append(matchWrap);
+            }
+        }
+
+        let buildMatches = (match, nr, wrap) => {
+            for (let i = 0; i < match.length; i++) {
+                const matchLine = match[i];
+
+                let matchWrap = createEl('span'),
+                    groupWrap = createEl('span'),
+                    prepend = i === 0 ? 'Match ' + nr : 'Group ' + i;
+
+                groupWrap.innerHTML = prepend;
+                matchWrap.textContent = matchLine;
+
+                matchWrap.prepend(groupWrap);
+
+                wrap.append(matchWrap);
+            }
+        }
+
+        let createEl = (elName) => {
+            return document.createElement(elName);
+        }
+
+        let runMatchesLogic = (matches) => {
+            updateMatchesCounter(matches);
+            buildMatchesList(matches);
+            return 'something';
+        }
+
+        let updateMatchesCounter = (matches) => {
+            let counter = document.getElementById('matches_counter'),
+                panelCounter = document.getElementById('matchpanel_count'),
+                matchesCount = matches.length;
+
+            if (matchesCount === 0) {
+                counter.textContent = 'No match';
+            } else {
+                counter.textContent = matchesCount + ' matches';
+            }
+            
+            panelCounter.textContent = matchesCount;
+        }
+
+        let calcMatches = () => {
+            let regex = document.getElementById('regex'),
+                mods = document.getElementById('modifiers'),
+                text = document.getElementById('text_area'),
+                a = text.value,
+                b = new RegExp(regex.textContent, mods.textContent);
+
+            let found = a.matchAll(b);
+
+            found = [...found];
+
+            return found === null ? [] : found;
+        }
+
+        let paintResult = () => {
+            let start = window.performance.now();
+            let regex = document.getElementById('regex'),
+                mods = document.getElementById('modifiers'),
+                text = document.getElementById('text_area'),
+                output = document.getElementById('output'),
+                a = text.value;
+
+            if (regex.textContent.length > 0) {
+                let b = new RegExp(regex.textContent, mods.textContent);
+                    a = a.replace(b, '<>$&</>');
+            }
+
+            let c = a.replace(/&/g,"&amp;")
+                .replace(/<(?!\/?)/g,"&lt;")
+                .replace(//g,"mark");
+
+            let end = window.performance.now();
+            let time = end - start;
+
+            matchTime = time;
+                
+            output.innerHTML = c;
+
+        }
+
+        let getCaretPosition = (element) => {
+            let position = 0;
+            const isSupported = typeof window.getSelection !== "undefined";
+            if (isSupported) {
+                const selection = window.getSelection();
+                if (selection.rangeCount !== 0) {
+                    const range = window.getSelection().getRangeAt(0);
+                    const preCaretRange = range.cloneRange();
+                    preCaretRange.selectNodeContents(element);
+                    preCaretRange.setEnd(range.endContainer, range.endOffset);
+                    position = preCaretRange.toString().length;
+                }
+            }
+            return position;
+        };
+
+        let setCaret= (node, pos) => {
+            var range = document.createRange();
+            var sel = window.getSelection();
+            let childs = node.childNodes;
+            let currLeng = 0;
+            let currNode = '';
+
+            for (let i = 0; i < childs.length; i++) {
+                const child = childs[i];
+            let childLength = child.length ? child.length : child.textContent.length;
+
+            if (pos <= (currLeng + childLength)) {
+                currNode = i;
+
+                break;
+            }
+
+            currLeng = currLeng + childLength;
+            }
+
+            let offset = (pos- currLeng);
+            let nodeToSet = node.childNodes[currNode];
+            let newData = getCorrectNode(nodeToSet, offset);
+
+            nodeToSet = newData.node;
+            offset = newData.offset;
+            range.setStart(nodeToSet, offset);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            node.focus();
+        };
+
+        getCorrectNode = (node, offset) => {
+            nodeTextTypes = [
+                3, // text
+                4, // CDATA
+                7, // progressing instruction
+                8, // Comment
+            ];
+
+            // If node is a textnode return node
+            if (nodeTextTypes.indexOf(node.nodeType) !== -1 && node.length >= offset) {
+                return {
+                    node: node,
+                    offset: offset
+                };
+            }
+
+            // if childCount is 1 and node is a textnode return first child
+            if (node.childElementCount === 1 && nodeTextTypes.indexOf(node.firstChild.nodeType) !== -1 && node.firstChild.length >= offset) {
+                return {
+                    node: node.firstChild,
+                    offset: offset
+                };
+            }
+
+            // Else loop over children to find the right element
+            let children = node.childNodes;
+
+            for (let i = 0; i < children.length; i++) {
+                const child = children[i];
+
+                // Get total text lenght of the node (including nested nodes)
+                let childLength = child.length ? child.length : child.textContent.length;
+
+                // If child lenght is bigger then the offset, the match is inside the node
+                if (offset <= childLength) {
+                    // If child is a textnode return the node
+                    if (nodeTextTypes.indexOf(child.nodeType) !== -1 && node.length >= offset) {
+                        return {
+                            node: child,
+                            offset: offset
+                        }
+                    // Else the node is nested
+                    } else {
+                        // if childCount is 1 and node is a textnode return first child
+                        if (child.childElementCount === 1 && nodeTextTypes.indexOf(child.firstChild.nodeType) !== -1 && node.firstChild.length >= offset) {
+                            return {
+                                node: child.firstChild,
+                                offset: offset
+                            };
+                        }
+
+                        // There are more childs
+                        return getCorrectNode(child, offset);
+                    }
+                } else {
+                    offset = offset - childLength;
+                }
+            }
+
+            return null;
+
+        }
+
+        let ColorizeRegex = () => {
+            let regex = document.getElementById('regex'),
+                value = regex.textContent,
+                caretPos = getCaretPosition(regex);
+
+            if (value.length > 0) {
+                let result = RegexColorizer.colorizeText(value);
+                regex.innerHTML = result;
+                setCaret(regex, caretPos);
+            }
+        };
+
+        let toggleDropdown = () => {
+            let dropdown = document.getElementById('modifier_settings_dropdown');
+            if (dropdown.classList.contains('open')) {
+                dropdown.classList.remove('open');
+            } else {
+                dropdown.classList.add('open');
+            }
+        };
+
+        let toggleSetting = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            let setting = e.target.classList.contains('setting') ? e.target : e.target.parentNode;
+            if (setting.dataset.checked === 'true') {
+                setting.dataset.checked = 'false';
+            } else {
+                setting.dataset.checked = 'true';
+            }
+            updateModifiers();
+        };
+
+        let updateModifiers = () => {
+            let settings_items = document.getElementsByClassName('setting'),
+                mods = document.getElementById('modifiers'),
+                result = '';
+
+            for (let i = 0; i < settings_items.length; i++) {
+                const setting = settings_items[i];
+                
+                if (setting.dataset.checked === 'true') {
+                    result = result + setting.dataset.value;
+                }
+            }
+            
+            mods.textContent = result;
+            oninputAction();
+        }
+
+        let updateModifiersOnInput = (e) => {
+            let target = e.target,
+                values = target.textContent;
+
+            clearModifiers();
+
+            for (let i = 0; i < values.length; i++) {
+                const char = values[i];
+                setModifier(char);
+            }
+        };
+
+        let setModifier = (mod) => {
+            let dropdown = document.getElementById('modifier_settings_dropdown'),
+                dropdownItems = dropdown.children;
+            
+            for (let i = 0; i < dropdownItems.length; i++) {
+                const element = dropdownItems[i];
+                if (element.dataset.value === mod) {
+                    element.dataset.checked = 'true';
+                }
+            }
+        }
+
+        let clearModifiers = () => {
+            let dropdown = document.getElementById('modifier_settings_dropdown'),
+                dropdownItems = dropdown.children;
+            
+            for (let i = 0; i < dropdownItems.length; i++) {
+                const element = dropdownItems[i];
+                element.dataset.checked = 'false';
+            }
+        }
+
+        let init = () => {
+            let regex = document.getElementById('regex'),
+                mods = document.getElementById('modifiers'),
+                text = document.getElementById('text_area'),
+                settings = document.getElementById('modifier_settings'),
+                settingsDropdown = document.getElementById('modifier_settings_dropdown'),
+                settings_items = document.getElementsByClassName('setting');
+
+            mods.textContent = 'gm';
+
+            regex.oninput = () => {
+                oninputAction();
+                ColorizeRegex();
+            };
+            mods.oninput = () => {
+                oninputAction();
+                updateModifiersOnInput(event);
+            };
+            text.oninput = oninputAction;
+
+            settings.onclick = toggleDropdown;
+            settingsDropdown.onmouseleave = toggleDropdown;
+            for (let i = 0; i < settings_items.length; i++) {
+                const item = settings_items[i];
+                item.onclick = toggleSetting;
+                
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+
+        const vscode = acquireVsCodeApi();
+
+        // Referece part
+        let post_load_message = () => {
+            vscode.postMessage({
+                command: 'view_opened'
+            });
+        }
+
+        let buildReference = (ref) => {
+            let parsedRefList = JSON.parse(ref);
+            buildReferenceList(parsedRefList);
+        }
+
+        let buildReferenceList = (references) => {
+            let referenceList = document.getElementById('reference_list');
+
+            referenceList.innerHTML = '';
+
+            for (let i = 0; i < references.length; i++) {
+                const reference = references[i];
+
+                let referenceWrap = createEl('tr');
+                referenceWrap.classList.add('reff');
+                buildRefItem(reference, referenceWrap);
+
+                referenceList.append(referenceWrap);
+            }
+        }
+
+        let buildRefItem = (reference, wrap) => {
+
+            let referenceFirstCell = createEl('td'),
+                referenceSecondCell = createEl('td');
+
+            referenceFirstCell.textContent = reference.label;
+            referenceSecondCell.textContent = reference.content;
+
+            wrap.append(referenceFirstCell);
+            wrap.append(referenceSecondCell);
+            
+        }
+
+        window.addEventListener('message', event => {
+            const message = event.data;
+            switch (message.command) {
+                case 'getting_data':
+                    let reference = JSON.parse(message.reference);
+                    buildReference(reference);
+                    break;
+            }
+        });
+        window.addEventListener('DOMContentLoaded', post_load_message);
+    </script>
+    <script nonce="${nonce}" src="${scriptRegexColorizerUri}"></script>
+</body>

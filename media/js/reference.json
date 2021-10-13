@@ -1,0 +1,214 @@
+[
+    {
+        "label": "Newline",
+        "content": "\\n"
+    },
+    {
+        "label": "Carriage return",
+        "content": "\\r"
+    },
+    {
+        "label": "Tab",
+        "content": "\\t"
+    },
+    {
+        "label": "Null character",
+        "content": "\\0"
+    },
+    {
+        "label": "A single character of: a, b or c",
+        "content": "[abc]"
+    },
+    {
+        "label": "A character except: a, b or c",
+        "content": "[^abc]"
+    },
+    {
+        "label": "A character in the range: a-z",
+        "content": "[a-z]"
+    },
+    {
+        "label": "A character not in the range: a-z",
+        "content": "[^a-z]"
+    },
+    {
+        "label": "A character in the range: a-z or A-Z",
+        "content": "[a-zA-Z]"
+    },
+    {
+        "label": "Any single character",
+        "content": "."
+    },
+    {
+        "label": "Alternate - match either a or b",
+        "content": "a|b"
+    },
+    {
+        "label": "Any whitespace character",
+        "content": "\\s"
+    },
+    {
+        "label": "Any non-whitespace character",
+        "content": "\\S"
+    },
+    {
+        "label": "Any digit",
+        "content": "\\d"
+    },
+    {
+        "label": "Any non-digit",
+        "content": "\\D"
+    },
+    {
+        "label": "Any word character",
+        "content": "\\w"
+    },
+    {
+        "label": "Any non-word character",
+        "content": "\\W"
+    },
+    {
+        "label": "Vertical whitespace character",
+        "content": "\\v"
+    },
+    {
+        "label": "Match subpattern number #",
+        "content": "\\#"
+    },
+    {
+        "label": "Unicode property or script category",
+        "content": "\\p{...}"
+    },
+    {
+        "label": "Negation of \\p",
+        "content": "\\P{...}"
+    },
+    {
+        "label": "Match subpattern `name`",
+        "content": "\\k&lt;name&gt;"
+    },
+    {
+        "label": "Hex character YYYY",
+        "content": "\\uYYYY"
+    },
+    {
+        "label": "Hex character YY",
+        "content": "\\xYY"
+    },
+    {
+        "label": "Octal character ddd",
+        "content": "\\ddd"
+    },
+    {
+        "label": "Control character Y",
+        "content": "\\cY"
+    },
+    {
+        "label": "Backspace character",
+        "content": "[\\b]"
+    },
+    {
+        "label": "Makes any character literal",
+        "content": "\\"
+    },
+    {
+        "label": "Match everything enclosed",
+        "content": "(?:...)"
+    },
+    {
+        "label": "Capture everything enclosed",
+        "content": "(...)"
+    },
+    {
+        "label": "Named Capturing Group",
+        "content": "(?&lt;name&gt;...)"
+    },
+    {
+        "label": "Positive Lookahead",
+        "content": "(?=...)"
+    },
+    {
+        "label": "Negative Lookahead",
+        "content": "(?!...)"
+    },
+    {
+        "label": "Positive Lookbehind",
+        "content": "(?&lt;=...)"
+    },
+    {
+        "label": "Negative Lookbehind",
+        "content": "(?&lt;!...)"
+    },
+    {
+        "label": "Zero or one of a",
+        "content": "a?"
+    },
+    {
+        "label": "Zero or more of a",
+        "content": "a*"
+    },
+    {
+        "label": "One or more of a",
+        "content": "a+"
+    },
+    {
+        "label": "Exactly 3 of a",
+        "content": "a{3}"
+    },
+    {
+        "label": "3 or more of a",
+        "content": "a{3,}"
+    },
+    {
+        "label": "Between 3 and 6 of a",
+        "content": "a{3,6}"
+    },
+    {
+        "label": "Greedy quantifier",
+        "content": "a*"
+    },
+    {
+        "label": "Lazy quantifier",
+        "content": "a*?"
+    },
+    {
+        "label": "Start of string",
+        "content": "^"
+    },
+    {
+        "label": "End of string",
+        "content": "$"
+    },
+    {
+        "label": "A word boundary",
+        "content": "\\b"
+    },
+    {
+        "label": "Non-word boundary",
+        "content": "\\B"
+    },
+    {
+        "label": "Contents in capture group 1",
+        "content": "$1"
+    },
+    {
+        "label": "Contents before match",
+        "content": "$`"
+    },
+    {
+        "label": "Contents after match",
+        "content": "$'"
+    },
+    {
+        "label": "Complete match contents",
+        "content": "$&amp;"
+    },
+    {
+        "label": "Hexadecimal replacement values",
+        "content": "\\x20"
+    },
+    {
+        "label": "Hexadecimal replacement values",
+        "content": "\\x{06fa}"
+    }
+]
