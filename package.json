@@ -1,7 +1,19 @@
 {
   "name": "jsregextester",
+  "publisher": "Babobski",
   "displayName": "JSRegexTester",
   "description": "JS regex editor",
+  "keywords": [
+		"regex",
+		"regex-editor",
+		"regex-workbench",
+		"regex-preview"
+	],
+  "icon": "images/icon.png",
+	"galleryBanner": {
+		"color": "#FFFFFF",
+		"theme": "light"
+	},
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.46.0"

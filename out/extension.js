@@ -38,7 +38,7 @@ function activate(context) {
         const nonce = getNonce();
         const styleMainPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'css/style.css'));
         const styleMainUri = panel.webview.asWebviewUri(styleMainPath);
-        const scriptRegexColorizerPathOnDisk = vscode.Uri.file(path.join(context.extensionPath, 'media', 'js/regex-colorizer.js'));
+        const scriptRegexColorizerPathOnDisk = vscode.Uri.file(path.join(context.extensionPath, 'media', 'js/regex-colorizer.min.js'));
         const scriptRegexColorizerUri = panel.webview.asWebviewUri(scriptRegexColorizerPathOnDisk);
         let replacements = {
             nonce: nonce,

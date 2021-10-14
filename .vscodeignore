@@ -9,3 +9,9 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
+images/preview.jpg
+images/modifier-select.jpg
+images/matches-overview.jpg
+images/reference-table.jpg
+images/preview-area.jpg
+images/validation-error.jpg
