@@ -29,3 +29,6 @@ Matches are highlighted in the preview area.
 When you make a validation mistake, a error is thrown.
 
 ![validation error](images/validation-error.jpg)
+
+## Commands
+- 'Open JS Regex Tester'
