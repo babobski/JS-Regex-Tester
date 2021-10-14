@@ -6,6 +6,10 @@
   "engines": {
     "vscode": "^1.46.0"
   },
+  "repository": {
+		"type": "git",
+		"url": "https://github.com/babobski/JS-Regex-Tester"
+	},
   "categories": [
     "Testing"
   ],

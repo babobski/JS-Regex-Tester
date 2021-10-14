@@ -141,7 +141,7 @@ body {
     left: 0;
     background-color: var(--vscode-menu-background);
     color: var(--vscode-menu-foreground);
-    z-index: 2;
+    z-index: 3;
     overflow: hidden;
     max-height: 0;
     opacity: 0;
@@ -166,14 +166,15 @@ body {
                 width: 10px;
                 height: 10px;
                 border-radius: 50%;
-                background: rgb(75, 161, 75);
+                background: #3eb53e;
+                box-shadow: inset #1c6704 0 -1px 2px;
             }
         }
         &:last-child {
             border-bottom: none;
         }
         .label {
-            font-size: larger;
+            letter-spacing: 1px;
             margin-bottom: 5px;
         }
         .desc {
@@ -210,6 +211,10 @@ body {
 
 #text_area,
 #output {
+    text-align: left;
+    overflow: hidden;
+    overflow-y: auto;
+    position: relative;
     width: 100%;
     height: calc(50% - 7.5px);
     background-color: var(--vscode-editor-background);
@@ -218,6 +223,18 @@ body {
     font-weight: var(--vscode-editor-font-weight);
     font-size: var(--vscode-editor-font-size);
     border: 1px solid var(--vscode-editor-background);
+    &:empty {
+        &::before {
+            position: absolute;
+            left: 0;
+            right: 0;
+            text-align: center;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            pointer-events: none;
+        }
+    }
     &:focus {
         outline: none;
     }
@@ -225,13 +242,27 @@ body {
 
 #text_area {
     resize: none;
+    &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        position: absolute;
+        left: 0;
+        right: 0;
+        text-align: center;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        pointer-events: none;
+        opacity: 1;
+        color: var(--vscode-editor-foreground);
+    }
 }
 
 #output {
     margin: 15px 0 0 0;
-    text-align: left;
-    overflow: hidden;
-    overflow-y: auto;
+    &:empty {
+        &::before {
+            content: 'Preview';
+        }
+    }
     mark {
         background-color: var(--vscode-editor-selectionBackground);
         color: var(--vscode-editor-selectionForeground);
@@ -289,7 +320,6 @@ textarea {
 // Regex highlight styling
 #regex {
     b { // metasequence 
-        // color: #000;
         color: var(--vscode-editorWarning-foreground);
         &.g1 {
             // group: depth 1
@@ -325,11 +355,11 @@ textarea {
         color: var(--vscode-editorBracketHighlight-foreground1);
         b {
             // char class: metasequence
-            color: var(--vscode-terminal-ansiRed);
+            color: var(--vscode-editorBracketHighlight-foreground2);
         }
         u {
             // char class: range-hyphen
-            color: var(--vscode-editorInfo-foreground);
+            color: var(--vscode-editorBracketHighlight-foreground2);
         }
     }
     b,
