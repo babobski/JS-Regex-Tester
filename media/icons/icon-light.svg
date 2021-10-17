@@ -1,0 +1,4 @@
+<svg width="36" height="36" version="1.1" viewBox="0 0 9.525 9.525" xmlns="http://www.w3.org/2000/svg">
+ <ellipse transform="matrix(.99999 .0047724 -.00482 .99999 0 0)" cx="4.7854" cy="4.7374" rx="4.7719" ry="4.7483" stroke-width=".91394"/>
+ <text x="1.3654388" y="5.9058776" font-family="Roboto" font-size="2.8222px" font-weight="bold" letter-spacing="0px" stroke-width=".26458" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="1.3654388" y="5.9058776" fill="#ffffff" font-family="'Fira Code'" font-size="2.8222px" font-weight="bold" stroke-width=".26458">(.*)</tspan></text>
+</svg>

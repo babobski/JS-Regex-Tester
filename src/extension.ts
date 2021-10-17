@@ -18,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 
 			panel.title = 'JS Regex Tester';
+			
 
 			let referenceJSON = fs.readFileSync(path.join(context.extensionPath, 'media', 'js', 'reference.json'));
 			let jsonAsString = referenceJSON.toString('utf8');
@@ -34,6 +35,8 @@ export function activate(context: vscode.ExtensionContext) {
 					}
 				}
 			);
+			
+			panel.iconPath = {light: vscode.Uri.file(path.join(context.extensionPath, 'media', 'icons/icon-light.svg')), dark: vscode.Uri.file(path.join(context.extensionPath, 'media', 'icons/icon-dark.svg'))};
 
 			let htmlDoc = fs.readFileSync(path.join(context.extensionPath, 'media', 'JSRegexTester.html'));
 			let docAsString = htmlDoc.toString('utf8');
