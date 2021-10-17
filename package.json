@@ -4,24 +4,24 @@
   "displayName": "JSRegexTester",
   "description": "JS regex editor",
   "keywords": [
-		"regex",
-		"regex-editor",
-		"regex-workbench",
-		"regex-preview"
-	],
+    "regex",
+    "regex-editor",
+    "regex-workbench",
+    "regex-preview"
+  ],
   "icon": "images/icon.png",
-	"galleryBanner": {
-		"color": "#FFFFFF",
-		"theme": "light"
-	},
-  "version": "0.0.1",
+  "galleryBanner": {
+    "color": "#FFFFFF",
+    "theme": "light"
+  },
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.46.0"
   },
   "repository": {
-		"type": "git",
-		"url": "https://github.com/babobski/JS-Regex-Tester"
-	},
+    "type": "git",
+    "url": "https://github.com/babobski/JS-Regex-Tester"
+  },
   "categories": [
     "Testing"
   ],
