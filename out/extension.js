@@ -19,7 +19,15 @@ const fs = require("fs");
 // your extension is activated the very first time the command is executed
 function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('jsregextester.openJSRegexTester', () => __awaiter(this, void 0, void 0, function* () {
-        const panel = vscode.window.createWebviewPanel('JSRegexTester', 'JS Regex Tester', vscode.ViewColumn.One, getWebviewOptions(context.extensionPath));
+        const panel = vscode.window.createWebviewPanel('JSRegexTester', 'JS Regex Tester', vscode.ViewColumn.One, {
+            // Enable javascript in the webview
+            enableScripts: true,
+            retainContextWhenHidden: true,
+            // And restrict the webview to only loading content from our extension's `media` directory.
+            localResourceRoots: [
+                vscode.Uri.file(path.join(context.extensionPath, 'media')),
+            ]
+        });
         panel.title = 'JS Regex Tester';
         let referenceJSON = fs.readFileSync(path.join(context.extensionPath, 'media', 'js', 'reference.json'));
         let jsonAsString = referenceJSON.toString('utf8');
@@ -57,16 +65,6 @@ exports.activate = activate;
 // this method is called when your extension is deactivated
 function deactivate() { }
 exports.deactivate = deactivate;
-function getWebviewOptions(extensionUri) {
-    return {
-        // Enable javascript in the webview
-        enableScripts: true,
-        // And restrict the webview to only loading content from our extension's `media` directory.
-        localResourceRoots: [
-            vscode.Uri.file(path.join(extensionUri, 'media')),
-        ]
-    };
-}
 function getNonce() {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

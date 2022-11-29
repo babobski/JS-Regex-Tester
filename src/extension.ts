@@ -14,7 +14,18 @@ export function activate(context: vscode.ExtensionContext) {
 				'JSRegexTester',
 				'JS Regex Tester',
 				vscode.ViewColumn.One,
-				getWebviewOptions(context.extensionPath)
+				{
+					// Enable javascript in the webview
+					enableScripts: true, 
+					retainContextWhenHidden: true,
+			
+					// And restrict the webview to only loading content from our extension's `media` directory.
+					localResourceRoots: [
+						vscode.Uri.file(
+							path.join(context.extensionPath, 'media')
+						),
+					]
+				}
 			);
 
 			panel.title = 'JS Regex Tester';
@@ -73,20 +84,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
-
-function getWebviewOptions(extensionUri: string): vscode.WebviewOptions {
-	return {
-		// Enable javascript in the webview
-		enableScripts: true,
-
-		// And restrict the webview to only loading content from our extension's `media` directory.
-		localResourceRoots: [
-			vscode.Uri.file(
-				path.join(extensionUri, 'media')
-			),
-		]
-	};
-}
 
 function getNonce() {
 	let text = '';
